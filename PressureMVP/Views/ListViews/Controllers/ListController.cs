@@ -339,21 +339,15 @@ namespace PressureMVP.Views.ListViews.Controllers
             var result = default(Pressure);
             int numberOfChecked = 0;
 
-
-            foreach (DataGridViewRow item in _view.dataGridViewPressureList.SelectedRows)
+            foreach (DataGridViewRow item in _view.dataGridViewPressureList.Rows)
             {
-                DataGridViewCheckBoxCell chk = (DataGridViewCheckBoxCell)item.Cells[7];
-                if (chk.Selected)
+                if (Convert.ToBoolean(item.Cells[7].Value) == true)
                 {
                     numberOfChecked++;
                     Guid id = Guid.Parse(_view.dataGridViewPressureList.Rows[item.Index].Cells[0].Value.ToString());
                     result = _model.GetPressureById(id);
                     if (numberOfChecked >= 2 || numberOfChecked == 0)
                         return null;
-                }
-                else
-                {
-                return null;
                 }
             }
 
@@ -363,19 +357,17 @@ namespace PressureMVP.Views.ListViews.Controllers
         public List<Pressure> PressureForDelete()
         {
             var result = new List<Pressure>();
-            var pressure = default(Pressure);
-            int numberOfRows = _view.dataGridViewPressureList.RowCount;
 
-
-            foreach (DataGridViewRow item in _view.dataGridViewPressureList.SelectedRows)
+            foreach (DataGridViewRow item in _view.dataGridViewPressureList.Rows)
             {
-                DataGridViewCheckBoxCell chk = (DataGridViewCheckBoxCell)item.Cells[7];
-
-                Guid id = Guid.Parse(_view.dataGridViewPressureList.Rows[item.Index].Cells[0].Value.ToString());
-                pressure = _model.GetPressureById(id);
-                result.Add(pressure);  
-
+                if (Convert.ToBoolean(item.Cells[7].Value) == true)
+                {
+                    Guid id = Guid.Parse(_view.dataGridViewPressureList.Rows[item.Index].Cells[0].Value.ToString());
+                    pressure = _model.GetPressureById(id);
+                    result.Add(pressure);
+                }
             }
+
             if (result.Count == 0)
                 return null;
             return result;
