@@ -77,7 +77,21 @@ namespace PressureMVP.Views.ListViews.Models
             return result;
         }
 
-        public async Task<List<Guid>> SoftDeletes(List<Pressure> list)
+        public async Task<bool> SoftDeletePressure(Pressure pressure)
+        {
+            var result = false;
+            try
+            {
+                result = _service.SoftDeletePressure(pressure.Id);
+            }
+            catch
+            {
+                throw;
+            }
+            return await Task.FromResult(result);
+        }
+
+        public async Task<List<Guid>> SoftDeletesPressures(List<Pressure> list)
         {
             var result = default(List<Guid>);
             try
@@ -87,6 +101,20 @@ namespace PressureMVP.Views.ListViews.Models
             catch
             {
                 throw new Exception("ListModel.SoftDeletes");
+            }
+            return await Task.FromResult(result);
+        }
+
+        public async Task<bool> HardDeletePressure(Pressure pressure)
+        {
+            var result = false;
+            try
+            {
+                result = _service.HardDeletePressure(pressure.Id);
+            }
+            catch
+            {
+                throw;
             }
             return await Task.FromResult(result);
         }

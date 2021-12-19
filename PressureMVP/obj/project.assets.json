@@ -1121,7 +1121,8 @@
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "C:\\Users\\alanj\\source\\repos\\ZaawansowaneTechnikiProgramowania\\ProjektZaliczeniowy\\Application\\bin\\Debug\\net5.0": {},
-        "https://api.nuget.org/v3/index.json": {}
+        "https://api.nuget.org/v3/index.json": {},
+        "https://nuget.robosoft.net.pl/v3/index.json": {}
       },
       "frameworks": {
         "net5.0-windows7.0": {
@@ -1166,7 +1167,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.300\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.403\\RuntimeIdentifierGraph.json"
       }
     }
   }

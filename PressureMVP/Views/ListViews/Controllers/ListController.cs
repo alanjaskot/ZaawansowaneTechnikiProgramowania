@@ -103,19 +103,43 @@ namespace PressureMVP.Views.ListViews.Controllers
                 {
                     string question = "Czy chcesz usunąć zapisane pomiary w bezpieczny sposób?";
                     string title = "Usuwanie pomiarów ciśnienia";
-                    var result = MessageBox.Show(question, title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                    if (result == DialogResult.OK)
+                    var decision = MessageBox.Show(question, title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                    if (decision == DialogResult.Yes)
                     {
-                        var deleteList = SoftDelete(deletes);
-                        MessageBox.Show($"Podana ilość pomiarów: {deleteList.Count+1} została usunięta");
-                    }
-                    else
-                    {
-                        var deleteList = HardDelete(deletes);
-                        MessageBox.Show($"Podana ilość pomiarów: {deleteList.Count+1} została usunięta");
-                    }
+                        if (deletes.Count == 1)
+                        {
+                            var result = SoftDelete(deletes[0]);
+                            if (result == true)
+                                MessageBox.Show("Podany pomiar został bezpiecznie usunięty");
+                        }
+                        if (deletes.Count > 1)
+                        {
+                            var result = SoftDeletes(deletes);
+                            MessageBox.Show($"Podana ilość pomiarów: {result.Count} została usunięta");
+                        }
                         
+                    }
+                    else if (decision == DialogResult.No)
+                    {
+                        if (deletes.Count == 1)
+                        {
+                            var result = HardDelete(deletes[0]);
+                            if (result == true)
+                                MessageBox.Show("Podany pomiar został bezpowrotnie usunięty");
+                        }
+                        if (deletes.Count > 1)
+                        {
+                            var result = HardDeletes(deletes);
+                            MessageBox.Show($"Podana ilość pomiarów: {result.Count} została bezpowrotnie usunięta");
+                        }
+                    }
+                    
                 }
+                else
+                {
+                    MessageBox.Show("Proszę wybrać pomiar do usunięcia");
+                }
+                DisplayAll();
             };
 
             await Task.CompletedTask;
@@ -324,7 +348,7 @@ namespace PressureMVP.Views.ListViews.Controllers
                     numberOfChecked++;
                     Guid id = Guid.Parse(_view.dataGridViewPressureList.Rows[item.Index].Cells[0].Value.ToString());
                     result = _model.GetPressureById(id);
-                    if (numberOfChecked >= 2)
+                    if (numberOfChecked >= 2 || numberOfChecked == 0)
                         return null;
                 }
                 else
@@ -346,27 +370,23 @@ namespace PressureMVP.Views.ListViews.Controllers
             foreach (DataGridViewRow item in _view.dataGridViewPressureList.SelectedRows)
             {
                 DataGridViewCheckBoxCell chk = (DataGridViewCheckBoxCell)item.Cells[7];
-                if (chk.Selected)
-                {
-                    Guid id = Guid.Parse(_view.dataGridViewPressureList.Rows[item.Index].Cells[0].Value.ToString());
-                    pressure = _model.GetPressureById(id);
-                    result.Add(pressure);
-                }
-                else
-                {
-                    return null;
-                }
-            }
 
+                Guid id = Guid.Parse(_view.dataGridViewPressureList.Rows[item.Index].Cells[0].Value.ToString());
+                pressure = _model.GetPressureById(id);
+                result.Add(pressure);  
+
+            }
+            if (result.Count == 0)
+                return null;
             return result;
         }
 
-        public List<Guid> SoftDelete(List<Pressure> pressures)
+        public bool SoftDelete(Pressure pressure)
         {
-            var result = default(List<Guid>);
+            var result = false;
             try
             {
-                result = _model.SoftDeletes(pressures).Result;
+                result = _model.SoftDeletePressure(pressure).Result;
             }
             catch
             {
@@ -375,7 +395,35 @@ namespace PressureMVP.Views.ListViews.Controllers
             return result;
         }
 
-        public List<Guid> HardDelete(List<Pressure> pressures)
+        public List<Guid> SoftDeletes(List<Pressure> pressures)
+        {
+            var result = default(List<Guid>);
+            try
+            {
+                result = _model.SoftDeletesPressures(pressures).Result;
+            }
+            catch
+            {
+                throw new Exception("ListController.SoftDelete");
+            }
+            return result;
+        }
+
+        public bool HardDelete(Pressure pressure)
+        {
+            var result = false;
+            try
+            {
+                result = _model.HardDeletePressure(pressure).Result;
+            }
+            catch
+            {
+                throw new Exception("ListController.SoftDelete");
+            }
+            return result;
+        }
+
+        public List<Guid> HardDeletes(List<Pressure> pressures)
         {
             var result = default(List<Guid>);
             try

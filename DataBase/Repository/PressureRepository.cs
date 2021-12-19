@@ -47,8 +47,9 @@ namespace DataBase.Repository
             try
             {
                 pressure.IsBuildIn = true;
-                _context.Pressures.Add(pressure);
-                result = true;
+                var context = _context.Pressures.Add(pressure);
+                if(context.State == EntityState.Added)
+                    result = true;
             }
             catch
             {
