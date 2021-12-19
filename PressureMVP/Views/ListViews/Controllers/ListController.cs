@@ -363,7 +363,7 @@ namespace PressureMVP.Views.ListViews.Controllers
                 if (Convert.ToBoolean(item.Cells[7].Value) == true)
                 {
                     Guid id = Guid.Parse(_view.dataGridViewPressureList.Rows[item.Index].Cells[0].Value.ToString());
-                    pressure = _model.GetPressureById(id);
+                    var pressure = _model.GetPressureById(id);
                     result.Add(pressure);
                 }
             }
